@@ -11,6 +11,7 @@ compile_OBJ:
 	$(CC) src/errorHandler.c -c -o build/errorHandler.o
 	$(CC) src/matrix_utils.c -c -o build/matrix_utils.o
 	$(CC) src/matrix_math.c -c -o build/matrix_math.o
+	$(CC) src/iterators.c -c -o build/iterators.o
 	
 	
 combine:
