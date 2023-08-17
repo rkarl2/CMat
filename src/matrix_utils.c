@@ -322,6 +322,10 @@ DIMENSION copyDim(const DIMENSION d){
     return createDimA(d.num_dim,d.shape);
 }
 
+DIMENSION emptyDim(){
+    return (DIMENSION) {.num_dim = 0, .size = 0, .shape =NULL};
+}
+
 MATRIX asTypeMatix(const MATRIX a, MATRIX_TYPES type){
     MATRIX b = emptyMat(copyDim(a.dim),type);
     MATRIXswitch(b.type, b.data, to, 

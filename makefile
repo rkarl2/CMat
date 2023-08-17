@@ -1,5 +1,4 @@
-CC= gcc
-PY= py -3.9
+CC= gcc -Werror
 AR= ar
 DEL = del
 OBJ := ./build/$(wildcard *.o)
@@ -19,9 +18,11 @@ combine:
 
 mtest:
 	$(CC) test/test.c build/matrix.a -o build/test.exe
+	$(CC) test/iteratorTests.c build/matrix.a -o build/iteratorTests.exe
 
 run:
 	build/test.exe
+	build/iteratorTests.exe
 
 
 clean: 

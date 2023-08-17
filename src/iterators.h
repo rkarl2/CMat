@@ -9,11 +9,17 @@ typedef struct MAT_iteratorS{
     uint64_t index;
     uint64_t loopCounter;
     int64_t indexParam;
-    int64_t (*callFunc) (struct MAT_iteratorS* self, uint64_t*);
+    int64_t (*callFunc) (struct MAT_iteratorS* , uint64_t*);
     void **miscParams; 
     uint32_t sizeOfMiscParams;
 } MAT_iteratorS;
 
+
+enum{
+    MAT_FAILED_TO_CALL_ITER = -2,
+    MAT_FINISHED_ITER = -1,
+    MAT_NON_ENDCAP_RESULT_ITER = 0
+};
 
 /*
 * \brief Calls an Iterator, the index is stored in index
@@ -21,7 +27,7 @@ typedef struct MAT_iteratorS{
 * \param iter iterator to call
 * \param index index to save the result in
 */
-int64_t MAT_callIter(MAT_iteratorS iter, uint64_t* index);
+int64_t MAT_callIter(MAT_iteratorS* iter, uint64_t* index);
 
 
 /*
@@ -29,18 +35,21 @@ int64_t MAT_callIter(MAT_iteratorS iter, uint64_t* index);
 */
 MAT_iteratorS MAT_emptyIter();
 
-/*
-* \brief Frees an iterator
-* Will free the dimesion, and every pointer in miscParams, and miscParams itself, 
-* use MAT_freeIterDim to free the iter dimesion without freeing miscParams
-*/
-void MAT_freeIter(MAT_iteratorS* iter);
 
 /*
 * \brief Frees only an iterator's dimesion
-* Use MAT_freeIter to free all of miscParams (if allocated)
 */
 void MAT_freeIterDim(MAT_iteratorS* iter);
+
+
+/*
+* \brief Calculates if an endcap was passed while incrementing the iterator
+* \param index updated index value
+* \param previousIndex provided by the MAT_iteratorS struct
+* \param dim provided by the MAT_iteratorS struct
+*/
+int64_t MAT_DetectEndcaps(uint64_t index, uint64_t previousIndex, const DIMENSION* dim);
+
 
 /*
 * \brief Creates an incremental iterator, that increments by increment each time it is called
