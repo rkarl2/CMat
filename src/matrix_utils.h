@@ -29,6 +29,10 @@ void freeDim(DIMENSION* d);
 */
 DIMENSION copyDim(const DIMENSION d);
 
+/*
+* /brief returns an 0'd out diminesion
+*/
+DIMENSION emptyDim();
 
 
 

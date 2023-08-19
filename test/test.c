@@ -4,7 +4,7 @@
 #include "../src/matrix_utils.h"
 #include <stdlib.h>
 #include "../src/gen_macros.h"
-
+#include "../src/iterators.h"
 
 
 
