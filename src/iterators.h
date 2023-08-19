@@ -4,30 +4,40 @@
 #include "matrix.h"
 #include "matrix_utils.h"
 
+
+typedef enum {
+    MAT_FAILED_TO_CALL_ITER = -2,
+    MAT_FINISHED_ITER = -1,
+    MAT_NORMAL_RETURN_ITER = 0,
+    MAT_LOOPED_ITER = 1,
+    MAT_PASSED_OVER_END_ITER = 2,
+    MAT_PASSED_OVER_END_AND_LOOPED_ITER = 3
+}MAT_iteratorReturnCodes;
+
+
 typedef struct MAT_iteratorS{
     DIMENSION dim;
     uint64_t index;
     uint64_t loopCounter;
     int64_t indexParam;
-    int64_t (*callFunc) (struct MAT_iteratorS* , uint64_t*);
+    MAT_iteratorReturnCodes (*callFunc) (struct MAT_iteratorS* , uint64_t*);
+    uint64_t callsInThisLoop;
+    uint64_t callsPerLoop;
     void **miscParams; 
     uint32_t sizeOfMiscParams;
 } MAT_iteratorS;
 
 
-enum{
-    MAT_FAILED_TO_CALL_ITER = -2,
-    MAT_FINISHED_ITER = -1,
-    MAT_NON_ENDCAP_RESULT_ITER = 0
-};
+// \brief Determines if the index from the return code is out of bounds
+#define MAT_ITER_PASSED_END(code) (code == MAT_PASSED_OVER_END_ITER || code == MAT_PASSED_OVER_END_AND_LOOPED_ITER)
 
 /*
-* \brief Calls an Iterator, the index is stored in index
+* \brief Calls an Iterator, the output index is stored in index
 * \return -1 when end of iterator, 0 when it is at no boundary, >=1 indicates which boundary it is ad 
 * \param iter iterator to call
 * \param index index to save the result in
 */
-int64_t MAT_callIter(MAT_iteratorS* iter, uint64_t* index);
+MAT_iteratorReturnCodes MAT_callIter(MAT_iteratorS* iter, uint64_t* index);
 
 
 /*
@@ -41,18 +51,15 @@ MAT_iteratorS MAT_emptyIter();
 */
 void MAT_freeIterDim(MAT_iteratorS* iter);
 
-
 /*
-* \brief Calculates if an endcap was passed while incrementing the iterator
-* \param index updated index value
-* \param previousIndex provided by the MAT_iteratorS struct
-* \param dim provided by the MAT_iteratorS struct
+* \brief Determines the return code for an iterator
+* \param iter overwrites callsInThisLoop, and loop counter when required
 */
-int64_t MAT_DetectEndcaps(uint64_t index, uint64_t previousIndex, const DIMENSION* dim);
+MAT_iteratorReturnCodes MAT_calcReturnCodes(MAT_iteratorS* iter);
 
 
 /*
-* \brief Creates an incremental iterator, that increments by increment each time it is called
+* \brief Creates an incremental iterator, that increments by increment each time it is called. A loop is considered going through every possible value based on the incrment.
 * \param dim Dimesion of the Matrix to iterate through, will create a copy
 * \param increment Increment amount, can be positive or negative
 * \param startingIndex Index to start at
@@ -72,13 +79,13 @@ MAT_iteratorS MAT_transposeIter(const DIMENSION dim, uint64_t startingIndex, uin
 /*
 * \brief Call function for incremental iterator
 */
-int64_t MAT_incrementalIterCallFunc(MAT_iteratorS* iter, uint64_t* index);
+MAT_iteratorReturnCodes MAT_incrementalIterCallFunc(MAT_iteratorS* iter, uint64_t* index);
 
 
 /*
 * \brief Call function for transpose iterator
 */
-int64_t MAT_incrementalIterCallFunc(MAT_iteratorS* iter, uint64_t* index);
+MAT_iteratorReturnCodes MAT_transposeCallFunc(MAT_iteratorS* iter, uint64_t* index);
 
 
 #endif
