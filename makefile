@@ -19,10 +19,12 @@ combine:
 mtest:
 	$(CC) test/test.c build/matrix.a -o build/test.exe
 	$(CC) test/iteratorTests.c build/matrix.a -o build/iteratorTests.exe
+	$(CC) test/mathTest.c build/matrix.a -o build/mathTest.exe
 
 run:
 	build/test.exe
 	build/iteratorTests.exe
+	build/mathTest.exe
 
 
 clean: 

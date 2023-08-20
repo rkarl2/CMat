@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 typedef enum {
-    U8, U16, U32, U64,
+    U8 = 0, U16, U32, U64,
     I8, I16, I32, I64,
     F32, F64
 }MATRIX_TYPES;

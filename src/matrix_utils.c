@@ -460,14 +460,35 @@ MATRIX randIntMatrix(DIMENSION d,MATRIX_TYPES t, int64_t min, int64_t max){
     return a;
 }
 
-void resizeMatrix(MATRIX* a, DIMENSION d, bool freeDima){
+void reshapeMatrix(MATRIX* a, DIMENSION d, bool freeDima){
     if(a->dim.size != d.size){
-        MATRIX_ERROR_HANDLER(INDEX_OUT_OF_BOUNDS, "resizeMatrix");
+        MATRIX_ERROR_HANDLER(INDEX_OUT_OF_BOUNDS, "reshapeMatrix");
         return;
     }
     if(freeDima) freeDim(&a->dim);
     a->dim = d;
 }
+
+void resizeMatrix(MATRIX* a, DIMENSION d, bool freeDima){
+    if(d.size == 0){
+        MATRIX_ERROR_HANDLER(INVALID_DIM_ERROR, __func__);
+        return;
+    }
+    if(a == NULL){
+        MATRIX_ERROR_HANDLER(NULL_POINTER_ERROR, __func__);
+        return;
+    }
+    if(freeDima) freeDim(&a->dim);
+    MATRIXswitch(a->type, a->data, data,
+        data =(typeof(data)) realloc(data,d.size*sizeof(typeof(*data)));
+        if(data == NULL){
+            MATRIX_ERROR_HANDLER(ALLOCATION_ERROR, __func__);
+        }
+        a->data.U8 = (uint8_t*)data;    
+    )
+    a->dim = d;
+}
+
 
 void closeMatrixRef(MATRIX a, MATRIX* b, uint32_t* start){
     if(b->data.U8 == atMatA(a,start)){
@@ -476,7 +497,7 @@ void closeMatrixRef(MATRIX a, MATRIX* b, uint32_t* start){
         return;
     }
     if(b->data.U8 == NULL){
-        MATRIX_ERROR_HANDLER(NULL_MATRIX_ERROR, "closeMatrixRef");
+        MATRIX_ERROR_HANDLER(NULL_POINTER_ERROR, "closeMatrixRef");
         return;
     }
     
@@ -489,7 +510,7 @@ void closeMatrixRef(MATRIX a, MATRIX* b, uint32_t* start){
 
 void copyAtMatrix(MATRIX a, MATRIX b, uint32_t* start){
     if(b.data.U8 == NULL||a.data.U8 == NULL){
-        MATRIX_ERROR_HANDLER(NULL_MATRIX_ERROR, "copyAtMatrix");
+        MATRIX_ERROR_HANDLER(NULL_POINTER_ERROR, "copyAtMatrix");
         return;
     }
     
@@ -546,7 +567,7 @@ void copyAtMatrix(MATRIX a, MATRIX b, uint32_t* start){
 void copyAtMatrixDifTypes(MATRIX a, MATRIX b, uint32_t* start){
 
     if(b.data.U8 == NULL||a.data.U8 == NULL){
-        MATRIX_ERROR_HANDLER(NULL_MATRIX_ERROR, "copyAtMatrixDifTypes");
+        MATRIX_ERROR_HANDLER(NULL_POINTER_ERROR, "copyAtMatrixDifTypes");
         return;
     }
     

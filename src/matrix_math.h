@@ -4,20 +4,35 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include "matrix.h"
+#include "iterators.h"
 #include <stdbool.h>
 
 
-MATRIX MAT_addS(MATRIX a, MATRIX* c, MATRIX_TYPES scalar_type, void* scalar);
+typedef enum{
+    MAT_incomatiableDim = 0,
+    MAT_compatableMatrix = 1,
+    MAT_useIters = 2
+}MAT_dimCompatabilies;
 
-MATRIX MAT_addSU8(MATRIX a, MATRIX* c, uint8_t scalar);
-MATRIX MAT_addSU16(MATRIX a, MATRIX* c, uint16_t scalar);
-MATRIX MAT_addSU32(MATRIX a, MATRIX* c, uint32_t scalar);
-MATRIX MAT_addSU64(MATRIX a, MATRIX* c, uint64_t scalar);
-MATRIX MAT_addSI8(MATRIX a, MATRIX* c, int8_t scalar);
-MATRIX MAT_addSI16(MATRIX a, MATRIX* c, int16_t scalar);
-MATRIX MAT_addSI32(MATRIX a, MATRIX* c, int32_t scalar);
-MATRIX MAT_addSI64(MATRIX a, MATRIX* c, int64_t scalar);
-MATRIX MAT_addSF32(MATRIX a, MATRIX* c, float scalar);
-MATRIX MAT_addSF64(MATRIX a, MATRIX* c, double scalar);
+bool MAT_compareDims(const DIMENSION* a, const DIMENSION* b);
+MAT_dimCompatabilies MAT_determineIters(const DIMENSION* a, const DIMENSION* b, MATRIX* dst, 
+                                        MAT_iterator* iterA, MAT_iterator* iterB, MAT_iterator* iterDst);
+
+MATRIX_TYPES MAT_determineOutputType(MATRIX_TYPES a, MATRIX_TYPES b);
+
+MATRIX MAT_elementwiseOP(MATRIX* a, MATRIX* b, MATRIX* dst, void* (*operation) (void*, void*, MATRIX_TYPES, MATRIX_TYPES, MATRIX_TYPES));
+
+MATRIX MAT_elementwiseOPfromITER(MATRIX* a, MATRIX* b, MATRIX* dst, 
+                                 void* (*operation) (void*, void*, MATRIX_TYPES, MATRIX_TYPES, MATRIX_TYPES),
+                                 MAT_iterator* iterA, MAT_iterator* iterB, MAT_iterator* iterDst);
+
+MATRIX MAT_add(MATRIX* a, MATRIX* b, MATRIX* dst);
+
+MATRIX MAT_sub(MATRIX* a, MATRIX* b, MATRIX* dst);
+
+MATRIX MAT_divide(MATRIX* a, MATRIX* b, MATRIX* dst);
+
+MATRIX MAT_multiply(MATRIX* a, MATRIX* b, MATRIX* dst);
+
 
 #endif

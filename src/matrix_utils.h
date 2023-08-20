@@ -256,8 +256,12 @@ uint32_t* index2point(DIMENSION d,uint64_t index);
 * dim d must match the size of matrix a
 * if freeDima is true, it will free the dim of a before applying the new dimensions
 */
-void resizeMatrix(MATRIX* a, DIMENSION d, bool freeDima);
+void reshapeMatrix(MATRIX* a, DIMENSION d, bool freeDima);
 
+/*
+* \brief resizes (and reallocs) the matrix to match dimesion d
+*/
+void resizeMatrix(MATRIX* a, DIMENSION d, bool freeDima);
 
 /*
 * Changes matrix a to match type type
